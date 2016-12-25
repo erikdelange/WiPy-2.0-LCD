@@ -12,7 +12,7 @@ The backpacks are based on I2C port expanders like the PCF8574. These provide an
 
 <table>
   <tr>
-    <th>PCF8574 Pin</th>
+    <th>PCF8574 Bit</th>
     <th>LCD display signal</th>
     <th>LCD display pin</th>
   </tr>
