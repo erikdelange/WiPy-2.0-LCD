@@ -65,139 +65,137 @@ class LCD():
 		"""	Perform initialization as specified in HD44780 datasheet. """
 
 		# note: no checks on impossible line and column combinations
-		self.i2c = i2c
-		self.addr = addr
-		self.lines = lines
-		self.columns = columns
-		self.backlight = self.LCD_BACKLIGHTOFF
-		self.display = self.LCD_DISPLAYOFF | self.LCD_CURSOROFF | self.LCD_BLINKOFF
-		self.x = 0
-		self.y = 0
+		self._i2c = i2c
+		self._addr = addr
+		self._lines = lines
+		self._columns = columns
+		self._backlight = self.LCD_BACKLIGHTOFF
+		self._display = self.LCD_DISPLAYOFF | self.LCD_CURSOROFF | self.LCD_BLINKOFF
+		self._x = 0
+		self._y = 0
 
-		i2c.writeto(self.addr, bytes([0x00]))
+		self._i2c.writeto(self._addr, bytes([0x00]))
 		sleep_ms(50)
-		self.write_init_nibble(self.LCD_RESET)
+		self._write_init_nibble(self.LCD_RESET)
 		sleep_ms(5)
-		self.write_init_nibble(self.LCD_RESET)
+		self._write_init_nibble(self.LCD_RESET)
 		sleep_ms(1)
-		self.write_init_nibble(self.LCD_RESET)
+		self._write_init_nibble(self.LCD_RESET)
 		sleep_ms(1)
 		# display now in 8-bit mode
-		self.write_init_nibble(self.LCD_FUNCTIONSET | self.LCD_4BITMODE)
+		self._write_init_nibble(self.LCD_FUNCTIONSET | self.LCD_4BITMODE)
 		# display now in 4-bit mode
-		if self.lines == 1:
-			self.write_command(self.LCD_FUNCTIONSET | self.LCD_1LINE | dots)
+		if self._lines == 1:
+			self._write_command(self.LCD_FUNCTIONSET | self.LCD_1LINE | dots)
 		else:
-			self.write_command(self.LCD_FUNCTIONSET | self.LCD_2LINE | dots)
+			self._write_command(self.LCD_FUNCTIONSET | self.LCD_2LINE | dots)
 		# now lines and font size cannot be changed anymore
-		self.write_command(self.LCD_DISPLAYCONTROL | self.display)
-		self.write_command(self.LCD_CLEARDISPLAY)
-		self.write_command(self.LCD_ENTRYMODESET | self.LCD_ENTRYLEFT | self.LCD_ENTRYSHIFTDECREMENT)
+		self._write_command(self.LCD_DISPLAYCONTROL | self._display)
+		self._write_command(self.LCD_CLEARDISPLAY)
+		self._write_command(self.LCD_ENTRYMODESET | self.LCD_ENTRYLEFT | self.LCD_ENTRYSHIFTDECREMENT)
 		# all steps from initializing by instruction now completed
 		self.display_on()
 		self.backlight_on()
 
 	def clear(self):
 		"""	Clear LCD and move cursor to top-left. """
-		self.write_command(self.LCD_CLEARDISPLAY)
-		self.write_command(self.LCD_RETURNHOME)
-		self.x = self.y = 0
+		self._write_command(self.LCD_CLEARDISPLAY)
+		self._write_command(self.LCD_RETURNHOME)
+		self._x = self._y = 0
 
 	def display_on(self):
 		""" Turn on (i.e. unblank) the LCD. """
-		self.display |= self.LCD_DISPLAYON
-		self.write_command(self.LCD_DISPLAYCONTROL | self.display)
+		self._display |= self.LCD_DISPLAYON
+		self._write_command(self.LCD_DISPLAYCONTROL | self._display)
 
 	def display_off(self):
 		""" Turn off (i.e. blank) the LCD. """
-		self.display &= ~self.LCD_DISPLAYON
-		self.write_command(self.LCD_DISPLAYCONTROL | self.display)
+		self._display &= ~self.LCD_DISPLAYON
+		self._write_command(self.LCD_DISPLAYCONTROL | self._display)
 
 	def cursor_on(self):
 		""" Make the cursor visible. """
-		self.display |= self.LCD_CURSORON
-		self.write_command(self.LCD_DISPLAYCONTROL | self.display)
+		self._display |= self.LCD_CURSORON
+		self._write_command(self.LCD_DISPLAYCONTROL | self._display)
 
 	def cursor_off(self):
 		""" Hide the cursor. """
-		self.display &= ~self.LCD_CURSORON
-		self.write_command(self.LCD_DISPLAYCONTROL | self.display & ~self.LCD_BLINKON)
+		self._display &= ~self.LCD_CURSORON
+		self._write_command(self.LCD_DISPLAYCONTROL | self._display & ~self.LCD_BLINKON)
 
 	def blink(self):
 		""" Make the cursor blink. Implicitly makes cursor visible. """
-		self.display |= self.LCD_BLINKON | self.LCD_CURSORON
-		self.write_command(self.LCD_DISPLAYCONTROL | self.display)
+		self._display |= self.LCD_BLINKON | self.LCD_CURSORON
+		self._write_command(self.LCD_DISPLAYCONTROL | self._display)
 
 	def solid(self):
-		""" Make the cursor solid. mplicitly makes cursor visible. """
-		self.display &= ~self.LCD_BLINKON | self.LCD_CURSORON
-		self.write_command(self.LCD_DISPLAYCONTROL | self.display)
+		""" Make the cursor solid. Implicitly makes cursor visible. """
+		self._display &= ~self.LCD_BLINKON | self.LCD_CURSORON
+		self._write_command(self.LCD_DISPLAYCONTROL | self._display)
 
 	def backlight_on(self):
 		"""	Turn on the backlight. """
-		self.backlight = self.LCD_BACKLIGHTON
-		self.i2c.writeto(self.addr, bytes([self.LCD_BACKLIGHTON]))
+		self._backlight = self.LCD_BACKLIGHTON
+		self._i2c.writeto(self._addr, bytes([self.LCD_BACKLIGHTON]))
 
 	def backlight_off(self):
 		"""	Turn off the backlight. """
-		self.backlight = self.LCD_BACKLIGHTOFF
-		self.i2c.writeto(self.addr,  bytes([self.LCD_BACKLIGHTOFF]))
+		self._backlight = self.LCD_BACKLIGHTOFF
+		self._i2c.writeto(self._addr,  bytes([self.LCD_BACKLIGHTOFF]))
 
 	def move_to(self, x, y):
-		""" Move the cursor to the indicated position. Position is zero based. """
-		self.x = x if x < self.columns else self.columns - 1
-		self.y = y if y < self.lines else self.lines - 1
-		address = x & 0x3F
-		if y & 1:
+		""" Move the cursor to the indicated position. (0,0 is top left). """
+		self._x = x if x < self._columns else self._columns - 1
+		self._y = y if y < self._lines else self._lines - 1
+		address = self._x & 0x3F
+		if self._y & 1:
 			address += 0x40	 # For lines 1 & 3 offset is 0x40
-		if y & 2:
+		if self._y & 2:
 			address += 0x14  # For lines 2 & 4 offset is 0x14
-		self.write_command(self.LCD_SETDDRAMADDR | address)
+		self._write_command(self.LCD_SETDDRAMADDR | address)
 
 	def putch(self, ch):
-		""" Write ch to the LCD and advance cursor one position. """
-		if self.x >= self.columns or ch == '\n':
-			self.x = 0
-			self.y += 1
-			if self.y >= self.lines:
-				self.y = 0
-			self.move_to(self.x, self.y)
+		""" Write ch to the LCD and advance cursor. """
+		if self._x >= self._columns or ch == '\n':
+			self._x = 0
+			self._y += 1
+			if self._y >= self._lines:
+				self._y = 0
+			self.move_to(self._x, self._y)
 		if ch != '\n':
-			self.write_data(ord(ch))
-			self.x += 1
+			self._write_data(ord(ch))
+			self._x += 1
 
 	def puts(self, s):
-		""" Write s to the LCD and advance the cursor appropriately. """
+		""" Write s to the LCD and advance the cursor. """
 		for ch in s:
 			self.putch(ch)
 
 	# Private functions
 
-	def write_byte(self, byte):
+	def _write_byte(self, byte):
 		"""	Write byte to LCD and pulse Enable.
 			Byte is latched on falling edge of Enable.
 		"""
-		self.i2c.writeto(self.addr, bytes([byte | self.MASK_EN | self.backlight]))
-		self.i2c.writeto(self.addr, bytes([byte | self.backlight]))
+		self._i2c.writeto(self._addr, bytes([byte | self.MASK_EN | self._backlight]))
+		self._i2c.writeto(self._addr, bytes([byte | self._backlight]))
 
-	def write_init_nibble(self, nibble):
-		"""	Write an initialization upper nibble to the LCD.
-			This function is only used during intialization.
-		"""
-		self.write_byte(nibble & 0xF0)
+	def _write_init_nibble(self, nibble):
+		"""	Write upper nibble to the LCD for initialization purposes. """
+		self._write_byte(nibble & 0xF0)
 
-	def write_command(self, cmd):
-		"""	Write a command in two nibbles to the LCD. """
+	def _write_command(self, cmd):
+		"""	Write a command as two nibbles to the LCD. """
 		# print("cmd: {0:02X} {0:08b}".format(cmd))
-		self.write_byte(cmd & 0xF0)
-		self.write_byte((cmd << 4) & 0xF0)
+		self._write_byte(cmd & 0xF0)
+		self._write_byte((cmd << 4) & 0xF0)
 		if cmd <= 3:  # Worst case delay for home and clear commands is 4.1 msec
 			sleep_ms(5)
 
-	def write_data(self, data):
-		"""Write data in two nibbles to the LCD. """
-		self.write_byte(self.MASK_RS | (data & 0xF0))
-		self.write_byte(self.MASK_RS | ((data << 4) & 0xF0))
+	def _write_data(self, data):
+		"""Write data as two nibbles to the LCD. """
+		self._write_byte(self.MASK_RS | (data & 0xF0))
+		self._write_byte(self.MASK_RS | ((data << 4) & 0xF0))
 
 
 if __name__ == "__main__":
@@ -220,7 +218,7 @@ if __name__ == "__main__":
 	print("Print alfabet")
 	for i in range(0, 26):
 		lcd.putch(chr(ord('A') + i))
-		sleep_ms(500)
+		sleep_ms(100)
 
 	print("Display off")
 	lcd.display_off()
@@ -255,6 +253,14 @@ if __name__ == "__main__":
 	lcd.backlight_off()
 	sleep_ms(5000)
 
-	print("Clear")
+	print("Clear and cursor off")
 	lcd.clear()
 	lcd.cursor_off()
+
+	print("Backlight on")
+	lcd.backlight_on()
+	sleep_ms(5000)
+
+	print("Print Ready bottom right")
+	lcd.move_to(11, 1)
+	lcd.puts("Ready")
