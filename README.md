@@ -86,17 +86,12 @@ def write_byte(self, byte):
 ```
 <b>Additional information</b>
 
-The I2C backpack I've been using: 
-https://www.hobbyelectronica.nl/product/i2c-lcd-interface-voor-16x2-en-20x4-displays/
+* The I2C backpack I've been using can be found [here] (https://www.hobbyelectronica.nl/product/i2c-lcd-interface-voor-16x2-en-20x4-displays/).
 
-The I2C level converter I've been using:
-https://www.hobbyelectronica.nl/product/i2c-level-conversie-module-5v-naar-3v/
+* The I2C level converter I've been using can be found [here] (https://www.hobbyelectronica.nl/product/i2c-level-conversie-module-5v-naar-3v/).
 
-Interesting C-Libraries with LCD drivers: 
-http://arduino-info.wikispaces.com/LCD-Blue-I2C
+* Interesting C-Libraries with LCD drivers can be found [here] (http://arduino-info.wikispaces.com/LCD-Blue-I2C).
 
-The datasheet for the LCD controller: 
-https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
+* The datasheet for the LCD controller can be found [here] (https://www.sparkfun.com/datasheets/LCD/HD44780.pdf).
 
-Details on the controllers memory layout for various display sizes: 
-http://irtfweb.ifa.hawaii.edu/~tcs3/tcs3/vendor_info/Technologic_systems/embeddedx86/HD44780_LCD/lcd0.shtml.htm
+* Details on the controllers memory layout for various display sizes can be found [here] (http://irtfweb.ifa.hawaii.edu/~tcs3/tcs3/vendor_info/Technologic_systems/embeddedx86/HD44780_LCD/lcd0.shtml.htm).
