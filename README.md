@@ -86,13 +86,13 @@ def write_byte(self, byte):<br>
 
 <b>Additional information</b>
 
-The display I've been using: 
+The I2C backpack I've been using: 
 https://www.hobbyelectronica.nl/product/i2c-lcd-interface-voor-16x2-en-20x4-displays/
 
 The I2C level converter I've been using:
 https://www.hobbyelectronica.nl/product/i2c-level-conversie-module-5v-naar-3v/
 
-C-Libraries with drivers: 
+Interesting C-Libraries with LCD drivers: 
 http://arduino-info.wikispaces.com/LCD-Blue-I2C
 
 The datasheet for the LCD controller: 
