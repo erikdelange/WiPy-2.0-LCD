@@ -66,24 +66,24 @@ I used a breadboard to hold the I2C level converter. There's al lot of wires aro
 
 <b>Software</b><br>
 Each I2C device has an address. You first have to figure what the address of your port expander is. The scan() function in WiPy's I2C library does this. Connect the backpack to the converter, and the converter to the WiPy and then run scan() as is shown below. If everything is connected OK you will receive an address (most often 0x27 or 39 decimal).
-
-&gt;&gt;&gt; from machine import I2C<br>
-&gt;&gt;&gt; i2c = I2C(0, I2C.MASTER)<br>
-&gt;&gt;&gt; i2c.scan()<br>
-[39]<br>
-
+```
+>>> from machine import I2C
+>>> i2c = I2C(0, I2C.MASTER)
+>>> i2c.scan()
+[39]
+```
 Data (like character 'A') is sent to the display in two steps; first the high nibble then the low nibble. Because the display works in 4-bit mode and its inputs DB4-7 are connected to pins 4-7 of the port expander all data must be placed in the high nibble when sending via I2C. So in order to send the lower nibble of the data byte it must first be shifted 4 position left into the high nibble. The corresponding function looks like this:
-
-def write_command(self, cmd):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.write_byte(cmd & 0xF0)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.write_byte((cmd << 4) & 0xF0)<br>
-
+```
+def write_command(self, cmd):
+    self.write_byte(cmd & 0xF0)
+    self.write_byte((cmd << 4) & 0xF0)
+```
 The lower nibbles are masked and used to transport control signals like enable. Data is accepted by the LCD display when the enable bit changes from high to low. The code below seems to transfer data twice, however the first time the enable signal is high (set via MASK_EN), and the second time it is low, thus triggering the read action by the display.
-
-def write_byte(self, byte):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.i2c.writeto(self.addr, bytes([byte | self.MASK_EN]))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.i2c.writeto(self.addr, bytes([byte]))<br>
-
+```
+def write_byte(self, byte):
+    self.i2c.writeto(self.addr, bytes([byte | self.MASK_EN]))
+    self.i2c.writeto(self.addr, bytes([byte]))
+```
 <b>Additional information</b>
 
 The I2C backpack I've been using: 
