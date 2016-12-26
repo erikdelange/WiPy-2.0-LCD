@@ -78,7 +78,7 @@ def write_command(self, cmd):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.write_byte(cmd & 0xF0)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.write_byte((cmd << 4) & 0xF0)<br>
 
-The lower nibbles are masked and used to transport control signals like enable. Data is accepted by the LCD display when the enable bit changes from high to low. The code below seems to transfer data twice, however the first time the enable signal is high (set via MASK_EN), and the second time it is low triggering the read by the display.
+The lower nibbles are masked and used to transport control signals like enable. Data is accepted by the LCD display when the enable bit changes from high to low. The code below seems to transfer data twice, however the first time the enable signal is high (set via MASK_EN), and the second time it is low, thus triggering the read action by the display.
 
 def write_byte(self, byte):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.i2c.writeto(self.addr, bytes([byte | self.MASK_EN]))<br>
