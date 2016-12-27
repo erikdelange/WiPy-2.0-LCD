@@ -2,7 +2,7 @@
 Controlling a HD44780 compliant LCD display connected to a WiPy 2.0 via I2C.
 
 ###Summary
-LCD displays in 16x2 or 20x4 format are abundant. Combine them with an I2C backpack and by using only four wires your WiPy can output text. Unfortunately you can't just send characters to the display. A special protocol is required. File *i2c_lcd.py* contains class *LCD()* which handles the complexities of communicating with the display for you. See *lcd_test.py* for an example how to use class LCD.
+LCD displays in 16x2 or 20x4 format are abundant. Combine them with an I2C backpack and by using only two pins your WiPy can output text. Unfortunately you can't just send characters to the display. A special protocol is required. File *i2c_lcd.py* contains class *LCD()* which handles the complexities of communicating with the display for you. See *lcd_test.py* for an example how to use class LCD.
 
 ###Backgroud
 There are several universal libraries to control displays attached to all different kinds of hardware. However providing a universal solution sometimes makes the software quite difficult to understand for beginners like me. Having problems getting them to work on my WiPy 2.0 I created this package with the aim to provide an - as simple as possible - example how to control a display.
