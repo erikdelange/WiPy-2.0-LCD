@@ -1,13 +1,13 @@
 # WiPy-2.0-LCD
 Controlling a HD44780 compliant LCD display connected to a WiPy 2.0 via I2C.
 
-###Summary
+### Summary
 LCD displays in 16x2 or 20x4 format are abundant. Combine them with an I2C backpack and by using only two pins your WiPy can output text. Unfortunately you can't just send characters to the display. A special protocol is required. File *i2c_lcd.py* contains class *LCD()* which handles the complexities of communicating with the display for you. See *lcd_test.py* for an example how to use class LCD.
 
-###Backgroud
+### Backgroud
 There are several universal libraries to control displays attached to all different kinds of hardware. However providing a universal solution sometimes makes the software quite difficult to understand for beginners like me. Having problems getting them to work on my WiPy 2.0 I created this package with the aim to provide an - as simple as possible - example how to control a display.
 
-###Hardware
+### Hardware
 The backpacks are based on I2C port expanders like the PCF8574. These provide an 8-bit output port. The LCD display has an 8-bit databus, but also needs 3 additional control signals so you would actually need an 11-bit port on the expander. To cope with this the display must be used in 4-bit mode. This means all data bytes are transferred as 2 separate nibbles using only the high part of the displays' databus (D4-D7). These pins are connected to D4 to D7 of the port expander, leaving the expanders lower D0 to D3 pins free for the control signals. On the version of the backpack I have (see image [expander.png](https://github.com/erikdelange/WiPy-2.0-LCD/blob/master/images/expander.png)) the connections are as follows:
 
 PCF8574 Bit | LCD display signal | LCD display pin
@@ -27,7 +27,7 @@ The backpack can be soldered directly on the display. However you can't connect 
 
 I used a breadboard to hold the I2C level converter. There's al lot of wires around (see image [board.png](https://github.com/erikdelange/WiPy-2.0-LCD/blob/master/images/board.png)). Make sure they are connected properly, especialy the 5V and 3.3V lines and ground. Check them all 3 times because a mistake may damage your WiPy! Also do not forget to remove the LED jumper from your expansion board. The LED is connected to P9 (expansion board G16) which now must be used as the I2C SDA signal. Port P10 (expansion board G17) is the I2C SCL signal. 
 
-###Software
+### Software
 Each I2C device has an address. You first have to figure what the address of your port expander is. The scan() function in WiPy's I2C library does this. Connect the backpack to the converter, and the converter to the WiPy and then run scan() as is shown below. If everything is connected OK you will receive an address (most often 0x27 or 39 decimal).
 ```python
 >>> from machine import I2C
@@ -47,7 +47,7 @@ def write_byte(self, byte):
     self.i2c.writeto(self.addr, bytes([byte | self.MASK_EN]))
     self.i2c.writeto(self.addr, bytes([byte]))
 ```
-###Additional information
+### Additional information
 
 * The I2C backpack I've been using can be found [here] (https://www.hobbyelectronica.nl/product/i2c-lcd-interface-voor-16x2-en-20x4-displays/).
 
