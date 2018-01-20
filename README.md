@@ -15,20 +15,20 @@ PCF8574 Bit | LCD display signal | LCD display pin
 0 | Register Select (RS) | 4
 1 | Read/Write (RW) | 5
 2 | Enable (E) | 6
-3 | Backlight (B)
+3 | Backlight (B) |
 4 | DB4 | 11
 5 | DB5 | 12
 6 | DB6 | 13
 7 | DB7 | 14
 
-I've read that sometimes the control signals are wired differently i.e. the pins from the port expander are connected to other pins on the display then indicated in the table above. With a it of trouble you can figure out the actual connections yourself. Continuously toggle a single bit on the port expander with an interval of +/- 5 seconds. Use a voltmeter to check each pin on the display in turn to figure out which one is constantly changing. Toggling a bit is done by writing the appropriate mask to the port expander, wait 5 seconds and then write all zero's. For example if you want to switch on bit 2 then write 0x04 (0b0000100) to the port expander. If the connections do not match you do have to modify the masks class LCD().
+I've read that sometimes the control signals are wired differently i.e. the pins from the port expander are connected to other pins on the display then indicated in the table above. With a bit of effort you can figure out the actual connections yourself. Programatically toggle a single bit on the port expander xontinuously with an interval of +/- 5 seconds. Use a voltmeter to check each pin on the display in turn to figure out which one is constantly changing. Toggling a bit is done by writing the appropriate mask to the port expander, wait 5 seconds and then write all zero's. For example if you want to switch on bit 2 then write 0x04 (0b0000100) to the port expander. If the connections do not match you do have to modify the masks class LCD().
 
-The backpack can be soldered directly on the display. However you can't connect it directly to the WiPy as the display requires 5V logic signals and the WiPy works on 3.3V. An I2C level [converter](https://github.com/erikdelange/WiPy-2.0-LCD/blob/master/images/converter.png) **must** be placed between the WiPy and the backpack. See image converter.png for the one I have used. This one has built-in pull-up resistors so I only needed some wires. The converter requires a 5v and 3.3V supply which can both be taken from the WiPy. The display can also be provided with 5V by the WiPy. 
+The backpack can be soldered directly on the display. However you can't connect it directly to the WiPy as the display requires 5V logic signals and the WiPy works on 3.3V. An I2C level [converter](https://github.com/erikdelange/WiPy-2.0-LCD/blob/master/images/converter.png) **must** be placed between the WiPy and the backpack. See image converter.png for the one I have used. This one has built-in pull-up resistors so I only needed some wires. The converter requires a 5V and 3.3V supply which can both be taken from the WiPy. The display can also be provided with 5V by the WiPy Expansion Board (Vin).
 
-I used a breadboard to hold the I2C level converter. There's al lot of wires around (see image [board.png](https://github.com/erikdelange/WiPy-2.0-LCD/blob/master/images/board.png)). Make sure they are connected properly, especialy the 5V and 3.3V lines and ground. Check them all 3 times because a mistake may damage your WiPy! Also do not forget to remove the LED jumper from your expansion board. The LED is connected to P9 (expansion board G16) which now must be used as the I2C SDA signal. Port P10 (expansion board G17) is the I2C SCL signal. 
+I used a breadboard to hold the I2C level converter. There's al lot of wires around (see image [board.png](https://github.com/erikdelange/WiPy-2.0-LCD/blob/master/images/board.png)). Make sure they are connected properly, especialy the 5V and 3.3V lines and ground. Check them all 3 times because a mistake may damage your WiPy! Also do not forget to remove the LED jumper from your expansion board. The LED is connected to P9 (expansion board G16) which now must be used as the I2C SDA signal. Port P10 (expansion board G17) is the I2C SCL signal.
 
 ### Software
-Each I2C device has an address. You first have to figure what the address of your port expander is. The scan() function in WiPy's I2C library does this. Connect the backpack to the converter, and the converter to the WiPy and then run scan() as is shown below. If everything is connected OK you will receive an address (most often 0x27 or 39 decimal).
+Each I2C device has an address. You first have to figure what the address of your port expander is. The scan() function in WiPy's I2C library does just this. Connect the backpack to the converter, and the converter to the WiPy and then run scan() as is shown below. If everything is connected OK you will receive an address (most often 0x27 or 39 decimal).
 ```python
 >>> from machine import I2C
 >>> i2c = I2C(0, I2C.MASTER)
@@ -49,12 +49,12 @@ def write_byte(self, byte):
 ```
 ### Additional information
 
-* The I2C backpack I've been using can be found [here] (https://www.hobbyelectronica.nl/product/i2c-lcd-interface-voor-16x2-en-20x4-displays/).
+* The I2C backpack I've been using can be found [here](https://www.hobbyelectronica.nl/product/i2c-lcd-interface-voor-16x2-en-20x4-displays/).
 
-* The I2C level converter I've been using can be found [here] (https://www.hobbyelectronica.nl/product/i2c-level-conversie-module-5v-naar-3v/).
+* The I2C level converter I've been using can be found [here](https://www.hobbyelectronica.nl/product/i2c-level-conversie-module-5v-naar-3v/).
 
-* Interesting C-Libraries with LCD drivers can be found [here] (http://arduino-info.wikispaces.com/LCD-Blue-I2C).
+* Interesting C-Libraries with LCD drivers can be found [here](http://arduino-info.wikispaces.com/LCD-Blue-I2C).
 
-* The datasheet for the LCD controller can be found [here] (https://www.sparkfun.com/datasheets/LCD/HD44780.pdf).
+* The datasheet for the LCD controller can be found [here](https://www.sparkfun.com/datasheets/LCD/HD44780.pdf).
 
-* Details on the controllers memory layout for various display sizes can be found [here] (http://irtfweb.ifa.hawaii.edu/~tcs3/tcs3/vendor_info/Technologic_systems/embeddedx86/HD44780_LCD/lcd0.shtml.htm).
+* Details on the controllers memory layout for various display sizes can be found [here](http://irtfweb.ifa.hawaii.edu/~tcs3/tcs3/vendor_info/Technologic_systems/embeddedx86/HD44780_LCD/lcd0.shtml.htm).
